@@ -1,0 +1,22 @@
+:root{--ink:#10243a;--muted:#52657a;--line:#d5deea;--acc:#2147e8;--bg:#f4f7fb}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 "Segoe UI",Arial,sans-serif}
+.wrap{max-width:34rem;margin:0 auto;padding:1.5rem 1.25rem 3rem}
+a{color:var(--acc)}
+h1{margin:.4rem 0 1rem;font-size:2rem;letter-spacing:-.02em}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:1rem}
+input,select{min-width:0;padding:.65rem .75rem;border:2px solid var(--line);border-radius:8px;background:#fff;color:inherit;font:inherit}
+input[type=checkbox]{width:1.2rem;height:1.2rem;padding:0;accent-color:var(--acc)}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+button{padding:.65rem 1rem;border:0;border-radius:8px;background:var(--acc);color:#fff;font:inherit;font-weight:600;cursor:pointer}
+button.ghost,.tabs button{background:#e8eefb;color:var(--acc)}
+.tabs .on{background:var(--acc);color:#fff}
+.row{display:flex;flex-wrap:wrap;gap:.5rem}
+.muted{color:var(--muted)}
+ul{margin:0;padding:0;list-style:none}
+li{display:flex;align-items:center;gap:.6rem;padding:.65rem 0;border-bottom:1px solid var(--line)}
+li:last-child{border:0}
+.bar{height:8px;overflow:hidden;background:#e3e9f4;border-radius:99px}
+.bar i{display:block;height:100%;width:0;background:var(--acc);transition:width .3s}
+html{-webkit-text-size-adjust:100%}
+button{min-height:2.5rem;touch-action:manipulation}

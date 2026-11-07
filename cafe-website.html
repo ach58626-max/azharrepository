@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fresh Bites Café – demo</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f3f9f4;color:#14281c;font:17px/1.5 "Segoe UI",Arial,sans-serif}
+.in{max-width:42rem;margin:auto;padding:0 1.25rem}
+.hero{padding:1.5rem 0 2.5rem;background:#1f7a4d;color:#fff}.hero .in{padding:0 1.25rem}
+a{color:inherit}h1{margin:.6rem 0 .4rem;font-size:clamp(2.4rem,9vw,4rem);line-height:1}
+button{padding:.55rem 1.1rem;border:0;border-radius:99px;font:inherit;font-weight:600;cursor:pointer}
+.tabs{display:flex;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0 .5rem}
+.tabs button{background:#dcefe1;color:#14532d}.tabs .on{background:#1f7a4d;color:#fff}
+.item{display:flex;align-items:center;gap:1rem;padding:.9rem 0;border-bottom:1px solid #cfe3d5}
+.item div{flex:1}.item small{display:block;color:#4a6354}
+.add{background:#14281c;color:#fff}
+.basket{position:sticky;bottom:0;margin-top:2rem;padding:.9rem 0;background:#14281c;color:#fff}
+.basket .in{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.basket a{padding:.6rem 1.1rem;border-radius:99px;background:#25d366;color:#0b2a17;font-weight:600;text-decoration:none}
+:focus-visible{outline:3px solid #ffd84d;outline-offset:2px}
+</style></head><body>
+<header class="hero"><div class="in"><a href="index.html">Back to portfolio</a><h1>Fresh Bites Café</h1><p>Fresh coffee, home-style breakfast and a quiet corner to work. Open daily, 8 am to 11 pm.</p></div></header>
+<main class="in"><div class="tabs" id="tabs"></div><div id="menu"></div></main>
+<div class="basket"><div class="in"><span id="sum">Your order is empty</span><a id="wa" href="#" target="_blank" rel="noopener">Order on WhatsApp</a></div></div>
+<script>
+const M=[["Breakfast","Masala omelette with paratha",450],["Breakfast","Halwa puri plate",550],["Coffee","Cold coffee",350],["Coffee","Hot cappuccino",400],["Snacks","Club sandwich",650],["Snacks","Chicken wrap",600]];
+const $=i=>document.getElementById(i);let cat="Breakfast",O={};
+function draw(){
+  $("tabs").innerHTML="";
+  [...new Set(M.map(m=>m[0]))].forEach(c=>{const b=document.createElement("button");b.textContent=c;if(c==cat)b.className="on";b.onclick=()=>{cat=c;draw()};$("tabs").append(b)});
+  $("menu").innerHTML="";
+  M.filter(m=>m[0]==cat).forEach(m=>{
+    const d=document.createElement("div"),i=document.createElement("div"),n=document.createElement("b"),s=document.createElement("small"),b=document.createElement("button");
+    d.className="item";n.textContent=m[1];s.textContent="Rs "+m[2]+(O[m[1]]?" – "+O[m[1]]+" in your order":"");
+    b.className="add";b.textContent="Add";b.onclick=()=>{O[m[1]]=(O[m[1]]||0)+1;draw()};
+    i.append(n,s);d.append(i,b);$("menu").append(d);
+  });
+  let n=0,t=0,txt="";
+  M.forEach(m=>{const q=O[m[1]]||0;n+=q;t+=q*m[2];if(q)txt+="\n"+q+" x "+m[1]});
+  $("sum").textContent=n?n+" items, Rs "+t:"Your order is empty";
+  $("wa").href="https://wa.me/923445705413?text="+encodeURIComponent("Hello, I’d like to order:"+txt+"\nTotal: Rs "+t);
+  $("wa").style.display=n?"":"none";
+}
+draw();
+</script></body></html>

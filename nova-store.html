@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nova Store – demo</title><link rel="stylesheet" href="projects.css">
+<style>
+.wrap{max-width:46rem}.top{display:flex;justify-content:space-between;align-items:flex-end;gap:1rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(9.5rem,1fr));gap:.8rem;margin-top:1rem}
+.p{display:flex;flex-direction:column;gap:.2rem}.ico{display:grid;place-items:center;height:5.5rem;border-radius:10px;background:#e8eefb;font-size:2.6rem}
+.p b{margin-top:.3rem}.p button{margin-top:.4rem}#cart{margin-top:1rem}
+li button{padding:.2rem .7rem}
+a.wa{display:block;margin-top:.8rem;padding:.8rem;border-radius:8px;background:#25d366;color:#06240f;font-weight:700;text-align:center;text-decoration:none}
+</style></head><body><div class="wrap">
+<div class="top"><div><a href="index.html">Back to portfolio</a><h1 style="margin-bottom:.2rem">Nova Store</h1></div><span id="cnt" class="muted"></span></div>
+<input id="s" type="search" placeholder="Search products" aria-label="Search products" style="width:100%;margin-top:.6rem">
+<div class="row tabs" id="tabs" style="margin-top:.6rem"></div>
+<div class="grid" id="g"></div>
+<div class="card" id="cart"><h2 style="margin:0 0 .4rem;font-size:1.1rem">Your cart</h2><ul id="l"></ul><p id="tot" style="font-weight:700"></p><a class="wa" id="wa" href="#" target="_blank" rel="noopener">Checkout on WhatsApp</a></div>
+</div>
+<script>
+const P=[["Smart watch","Watches","⌚",8500],["Classic watch","Watches","🕰️",6200],["Headphones","Audio","🎧",7400],["Speaker","Audio","🔊",4800],["Backpack","Bags","🎒",3900],["Handbag","Bags","👜",5200],["Running shoes","Shoes","👟",6800],["Boots","Shoes","🥾",7900]];
+const $=i=>document.getElementById(i),R=n=>"Rs "+n.toLocaleString(),cats=["All",...new Set(P.map(p=>p[1]))];
+let cat="All",C={};
+try{C=JSON.parse(localStorage.getItem("cart"))||{}}catch(e){}
+const save=()=>{try{localStorage.setItem("cart",JSON.stringify(C))}catch(e){}};
+function btn(t,cls,f,lbl){const b=document.createElement("button");b.textContent=t;if(cls)b.className=cls;if(lbl)b.setAttribute("aria-label",lbl);b.onclick=f;return b}
+function draw(){
+  $("tabs").innerHTML="";cats.forEach(c=>$("tabs").append(btn(c,c==cat?"on":"",()=>{cat=c;draw()})));
+  const q=$("s").value.toLowerCase(),g=$("g");g.innerHTML="";
+  P.filter(p=>(cat=="All"||p[1]==cat)&&p[0].toLowerCase().includes(q)).forEach(p=>{
+    const d=document.createElement("div"),i=document.createElement("div"),n=document.createElement("b"),r=document.createElement("span");
+    d.className="card p";i.className="ico";i.textContent=p[2];n.textContent=p[0];r.className="muted";r.textContent=R(p[3]);
+    d.append(i,n,r,btn("Add to cart","",()=>{C[p[0]]=(C[p[0]]||0)+1;save();draw()}));g.append(d);
+  });
+  if(!g.children.length)g.textContent="No products found.";
+  const l=$("l");l.innerHTML="";let n=0,t=0,txt="";
+  P.forEach(p=>{
+    const k=C[p[0]];if(!k)return;n+=k;t+=k*p[3];txt+="\n"+k+" x "+p[0];
+    const li=document.createElement("li"),s=document.createElement("span"),c=document.createElement("b");
+    s.style.flex="1";s.textContent=p[0]+" ("+R(p[3]*k)+")";c.textContent=k;
+    li.append(s,btn("-","ghost",()=>{C[p[0]]--;if(!C[p[0]])delete C[p[0]];save();draw()},"Remove one"),c,btn("+","ghost",()=>{C[p[0]]++;save();draw()},"Add one"));l.append(li);
+  });
+  if(!n)l.innerHTML='<li class="muted">Your cart is empty.</li>';
+  $("cnt").textContent=n+" in cart";$("tot").textContent="Total: "+R(t);
+  $("wa").style.display=n?"":"none";
+  $("wa").href="https://wa.me/923445705413?text="+encodeURIComponent("Hello, I’d like to order:"+txt+"\nTotal: "+R(t));
+}
+$("s").oninput=draw;draw();
+</script></body></html>

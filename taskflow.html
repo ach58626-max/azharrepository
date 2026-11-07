@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TaskFlow – demo</title><link rel="stylesheet" href="projects.css"></head>
+<body><div class="wrap">
+<a href="index.html">Back to portfolio</a><h1>TaskFlow</h1>
+<div class="card">
+<form id="f" class="row"><input id="t" placeholder="What needs doing?" aria-label="New task" required style="flex:1"><select id="p" aria-label="Priority"><option>Normal</option><option>High</option></select><button>Add</button></form>
+<div class="bar" style="margin:1rem 0 .4rem"><i id="bar"></i></div>
+<p id="stat" class="muted" style="margin:0 0 .75rem"></p>
+<div class="row tabs" id="tabs"><button data-f="all">All</button><button data-f="active">Active</button><button data-f="done">Done</button></div>
+<ul id="l"></ul>
+<button class="ghost" id="clr">Clear completed</button>
+</div></div>
+<script>
+let T=null,F="all";
+try{T=JSON.parse(localStorage.getItem("tf"))}catch(e){}
+if(!T)T=[{x:"Design the homepage",h:false,d:true},{x:"Fix the mobile menu",h:true,d:false},{x:"Deploy the website",h:true,d:false},{x:"Write project notes",h:false,d:false}];
+const $=i=>document.getElementById(i),save=()=>{try{localStorage.setItem("tf",JSON.stringify(T))}catch(e){}};
+function draw(){
+  const l=$("l");l.innerHTML="";
+  T.filter(t=>F=="all"||(F=="done")==t.d).forEach(t=>{
+    const li=document.createElement("li"),c=document.createElement("input"),s=document.createElement("span"),b=document.createElement("button");
+    c.type="checkbox";c.checked=t.d;c.setAttribute("aria-label","Mark done");c.onchange=()=>{t.d=c.checked;save();draw()};
+    s.textContent=t.x+(t.h?" (high priority)":"");s.style.flex="1";if(t.d)s.style.textDecoration="line-through";
+    b.textContent="Delete";b.className="ghost";b.onclick=()=>{T=T.filter(z=>z!=t);save();draw()};
+    li.append(c,s,b);l.append(li);
+  });
+  const n=T.filter(t=>t.d).length;
+  $("bar").style.width=(T.length?n/T.length*100:0)+"%";
+  $("stat").textContent=T.length?n+" of "+T.length+" tasks done":"No tasks yet. Add your first one above.";
+  document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.f==F));
+}
+$("f").onsubmit=e=>{e.preventDefault();T.push({x:$("t").value.trim(),h:$("p").value=="High",d:false});$("t").value="";save();draw()};
+$("tabs").onclick=e=>{if(e.target.dataset.f){F=e.target.dataset.f;draw()}};
+$("clr").onclick=()=>{T=T.filter(t=>!t.d);save();draw()};
+draw();
+</script></body></html>

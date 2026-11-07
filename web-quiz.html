@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Web basics quiz – demo</title><link rel="stylesheet" href="projects.css"></head>
+<body><div class="wrap"><a href="index.html">Back to portfolio</a><h1>Web basics quiz</h1><div class="card" id="box"></div></div>
+<script>
+const Q=[["What does HTML stand for?",["HyperText Markup Language","High Tech Modern Language","Home Tool Markup Language"],0],["Which language styles a web page?",["Python","CSS","SQL"],1],["Which keyword declares a constant in JavaScript?",["var","let","const"],2],["What does a React component return?",["JSX","A database","A stylesheet"],0],["Node.js lets you run JavaScript on the…",["Server","Printer","Monitor"],0]];
+let i=0,s=0;const box=document.getElementById("box");
+const el=(t,txt,cls)=>{const e=document.createElement(t);if(txt)e.textContent=txt;if(cls)e.className=cls;return e};
+function show(){
+  box.innerHTML="";
+  if(i>=Q.length){
+    const b=el("button","Restart");b.onclick=()=>{i=s=0;show()};
+    box.append(el("h2","Your score: "+s+" / "+Q.length),el("p",s==Q.length?"Perfect score. Well done!":s>=3?"Good job. Try again for a perfect score.":"Keep practising and try again.","muted"),b);return;
+  }
+  const q=Q[i],bar=el("div","","bar"),f=el("i"),fb=el("p"),nx=el("button",i==Q.length-1?"See score":"Next question"),opts=[];
+  f.style.width=(i/Q.length*100)+"%";bar.append(f);nx.style.display="none";fb.style.fontWeight="600";
+  nx.onclick=()=>{i++;show()};
+  box.append(bar,el("p","Question "+(i+1)+" of "+Q.length,"muted"),el("h2",q[0]));
+  q[1].forEach((t,k)=>{
+    const b=el("button",t,"ghost");b.style.cssText="display:block;width:100%;margin:.4rem 0;text-align:left";
+    b.onclick=()=>{
+      opts.forEach((o,j)=>{o.disabled=true;if(j==q[2]){o.style.background="#d1f5df";o.style.color="#14532d"}});
+      if(k==q[2]){s++;fb.textContent="Correct!"}else{b.style.background="#fde0dd";b.style.color="#8a1c14";fb.textContent="Not quite. The right answer is highlighted."}
+      nx.style.display="";
+    };
+    opts.push(b);box.append(b);
+  });
+  box.append(fb,nx);
+}
+show();
+</script></body></html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Expense tracker – demo</title><link rel="stylesheet" href="projects.css"></head>
+<body><div class="wrap">
+<a href="index.html">Back to portfolio</a><h1>Expense tracker</h1>
+<div class="card"><p class="muted" style="margin:0">Balance</p>
+<p id="bal" style="margin:0;font-size:2.2rem;font-weight:700"></p>
+<div class="row" style="gap:2rem"><span>Income <b id="inc"></b></span><span>Spent <b id="exp"></b></span></div></div>
+<form id="f" class="card row" style="margin:1rem 0">
+<input id="d" placeholder="Description" aria-label="Description" required style="flex:1 1 9rem">
+<input id="a" type="number" min="1" step="any" placeholder="Amount" aria-label="Amount" required style="width:7rem">
+<select id="k" aria-label="Category"><option>Income</option><option>Food</option><option>Bills</option><option>Transport</option><option>Other</option></select>
+<button>Add</button></form>
+<div class="card"><h2 style="margin:0 0 .5rem;font-size:1.1rem">Spending by category</h2><div id="cats"></div></div>
+<div class="card" style="margin-top:1rem"><ul id="l"></ul></div>
+</div>
+<script>
+let E=null;
+try{E=JSON.parse(localStorage.getItem("ex"))}catch(e){}
+if(!E)E=[{d:"Salary",a:80000,k:"Income"},{d:"Groceries",a:12500,k:"Food"},{d:"Electricity bill",a:7800,k:"Bills"},{d:"Fuel",a:5000,k:"Transport"}];
+const $=i=>document.getElementById(i),R=n=>"Rs "+n.toLocaleString();
+const save=()=>{try{localStorage.setItem("ex",JSON.stringify(E))}catch(e){}};
+function draw(){
+  const inc=E.filter(e=>e.k=="Income").reduce((s,e)=>s+e.a,0),out=E.filter(e=>e.k!="Income"),exp=out.reduce((s,e)=>s+e.a,0);
+  $("bal").textContent=R(inc-exp);$("inc").textContent=R(inc);$("exp").textContent=R(exp);
+  const by={};out.forEach(e=>by[e.k]=(by[e.k]||0)+e.a);
+  $("cats").innerHTML=Object.keys(by).length?Object.entries(by).map(([k,v])=>'<p style="margin:.5rem 0 .2rem">'+k+' <span class="muted">'+R(v)+'</span></p><div class="bar"><i style="width:'+(v/exp*100)+'%"></i></div>').join(""):'<p class="muted">Add an expense to see the chart.</p>';
+  const l=$("l");l.innerHTML="";
+  if(!E.length)l.innerHTML='<li class="muted">No entries yet.</li>';
+  E.slice().reverse().forEach(e=>{
+    const li=document.createElement("li"),s=document.createElement("span"),m=document.createElement("b"),b=document.createElement("button");
+    s.style.flex="1";s.textContent=e.d+" ("+e.k+")";
+    m.textContent=(e.k=="Income"?"+":"-")+R(e.a);m.style.color=e.k=="Income"?"#1a7f4b":"#c0392b";
+    b.textContent="Delete";b.className="ghost";b.onclick=()=>{E=E.filter(z=>z!=e);save();draw()};
+    li.append(s,m,b);l.append(li);
+  });
+}
+$("f").onsubmit=ev=>{ev.preventDefault();E.push({d:$("d").value.trim(),a:+$("a").value,k:$("k").value});ev.target.reset();save();draw()};
+draw();
+</script></body></html>
